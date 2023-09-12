@@ -171,9 +171,9 @@ export function App() {
         return senaryValues;
     }
 
-    function getSenaryToString(charactersInSenary: number[], charactersAvailable: Character[]): string {
+    function getSenaryToString(charactersInSenary: string[], charactersAvailable: Character[]): string {
         let text: string = "";
-        textEntry.split(" ").forEach(senaryDigit => {
+        charactersInSenary.forEach(senaryDigit => {
             charactersAvailable.forEach((character: Character) => {
                 if (Number(senaryDigit) == character.getSenary()) text += character.getChar();
             })
@@ -197,8 +197,7 @@ export function App() {
         .every(character => _reference.includes(character));
 
     if (entryType) {
-        const stringInSenary: number[] = getStringToSenary(textEntry, characters);
-        const str = getSenaryToString(stringInSenary, characters);
+        const str = getSenaryToString(textEntry.split(" "), characters);
 
         setSenaryOutput(str.trim());
     }
@@ -214,7 +213,8 @@ export function App() {
 
   function handleCopyToClipboard() {
       if (textEntry.length) {
-          const textToCopy = outputDivRef?.current?.innerText;
+          //@ts-ignore
+          const textToCopy = outputDivRef.current.innerText;
 
           const tempInput = document.createElement('input');
           tempInput.value = textToCopy;
