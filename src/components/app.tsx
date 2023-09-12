@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState, FormEventHandler } from 'react';
+import { useState } from 'react';
 
 const Wrapper = styled.div`
   max-width: 480px;
@@ -170,6 +170,7 @@ export function App() {
         }
         return senaryValues;
     }
+    /*
     function getSenaryToString(charactersInSenary: number[], charactersAvailable: Character[]): string {
         let text: string = "";
         charactersInSenary.forEach((currentSenary: number) => {
@@ -179,6 +180,7 @@ export function App() {
         })
         return text;
     }
+    */
 
     const availableChars = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ,.?!";
     const characters = getCharactersList(availableChars, getDecimalToSenary);
