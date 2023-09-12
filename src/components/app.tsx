@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 const Wrapper = styled.div`
   max-width: 480px;
@@ -170,31 +170,59 @@ export function App() {
         }
         return senaryValues;
     }
-    /*
+
     function getSenaryToString(charactersInSenary: number[], charactersAvailable: Character[]): string {
         let text: string = "";
-        charactersInSenary.forEach((currentSenary: number) => {
-            charactersAvailable.forEach((currentCharacter: Character) => {
-                (currentSenary == currentCharacter.getSenary()) && (text += currentCharacter.getChar());
+        textEntry.split(" ").forEach(senaryDigit => {
+            charactersAvailable.forEach((character: Character) => {
+                if (Number(senaryDigit) == character.getSenary()) text += character.getChar();
             })
         })
         return text;
     }
-    */
 
-    const availableChars = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ,.?!";
+    const availableChars = "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ,.?!0123456789";
     const characters = getCharactersList(availableChars, getDecimalToSenary);
-
 
   const [textEntry, setTextEntry] = useState<string>("");
   const [senaryOutput, setSenaryOutput] = useState<string>("");
+  const outputDivRef = useRef(null);
 
   function handleConvertButton() {
-    const stringInSenary: number[] = getStringToSenary(textEntry, characters);
+    if (textEntry.trim()) {
+    const _reference: string = '0123456789';
+    const entryType = textEntry.split(" ")
+        .join("")
+        .split("")
+        .every(character => _reference.includes(character));
 
-    let senaryInString: string = '';
-    stringInSenary.forEach(curNumber => (senaryInString += curNumber + " "));
-    setSenaryOutput(senaryInString);
+    if (entryType) {
+        const stringInSenary: number[] = getStringToSenary(textEntry, characters);
+        const str = getSenaryToString(stringInSenary, characters);
+
+        setSenaryOutput(str.trim());
+    }
+    else {
+        const stringToSenary: number[] = getStringToSenary(textEntry.trim(), characters);
+        
+        let stringInSenary: string = '';
+        stringToSenary.forEach((currentSenary) => (stringInSenary += currentSenary + " "));
+        setSenaryOutput(stringInSenary);
+    }
+    }
+  }
+
+  function handleCopyToClipboard() {
+      if (textEntry.length) {
+          const textToCopy = outputDivRef?.current?.innerText;
+
+          const tempInput = document.createElement('input');
+          tempInput.value = textToCopy;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+      }
   }
 
   return (
@@ -214,7 +242,7 @@ export function App() {
       </div>
       <div className="input-block">
         <label>Saida</label>
-        <div className="textarea">
+        <div className="textarea" ref={outputDivRef}>
           {senaryOutput.length <= 0 ? 
             <span className="placeholder">33 14 17 6 4 14 20 18</span> : 
             senaryOutput} 
@@ -222,7 +250,7 @@ export function App() {
       </div>
       <div className="buttons">
         <button onClick={handleConvertButton}>Converter</button>
-        <button>Copiar</button>
+        <button onClick={handleCopyToClipboard}>Copiar</button>
       </div>
     </Wrapper>
   )
